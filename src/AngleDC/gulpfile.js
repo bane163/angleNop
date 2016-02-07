@@ -1,11 +1,14 @@
-﻿var args = require('yargs').argv,
+﻿/// <binding />
+var args = require('yargs').argv,
     path = require('path'),
     flip = require('css-flip'),
+    concat = require("gulp-concat"),
     through = require('through2'),
     gulp = require('gulp'),
     $ = require('gulp-load-plugins')(),
     gulpsync = $.sync(gulp),
     PluginError = $.util.PluginError,
+    cssmin = require("gulp-cssmin"),
     del = require('del');
 
 // production mode (see build task)
@@ -32,7 +35,10 @@ var paths = {
     app: 'wwwroot/app/',
     markup: 'wwwroot/master/jade/',
     styles: 'wwwroot/master/less/',
-    scripts: 'wwwroot/master/js/'
+    scripts: 'wwwroot/master/js/',
+    customScripts:'wwwroot/',
+    css: ['wwwroot/content/css/*.css', 'wwwroot/app/css/app.css'],
+    concatCssDest: 'wwwroot/app/css/app.min.css'
 }
 
 // if sass -> switch to sass folder
@@ -65,8 +71,8 @@ var source = {
               paths.scripts + 'modules/**/*.module.js',
               paths.scripts + 'modules/**/*.js',
               // custom modules
-              paths.scripts + 'custom/**/*.module.js',
-              paths.scripts + 'custom/**/*.js'
+              paths.customScripts + 'custom/**/*.module.js',
+              paths.customScripts + 'custom/**/*.js'
     ],
     templates: {
         index: [paths.markup + 'index.*'],
@@ -191,6 +197,15 @@ gulp.task('vendor:app', function () {
         .pipe(cssFilter.restore())
         .pipe(gulp.dest(vendor.app.dest));
 
+});
+
+//APP CSS
+
+gulp.task("min:css", function () {
+    gulp.src(paths.css)
+        .pipe(concat(paths.concatCssDest))
+        .pipe(cssmin())
+        .pipe(gulp.dest("."));
 });
 
 // APP LESS

@@ -19,7 +19,7 @@
         $locationProvider.html5Mode(false);
 
         // defaults to dashboard
-        $urlRouterProvider.otherwise('/app/welcome');
+        $urlRouterProvider.otherwise('/login');
 
         // 
         // Application Routes
@@ -31,11 +31,10 @@
               templateUrl: helper.basepath('app.html'),
               resolve: helper.resolveFor('modernizr', 'icons')
           })
-          .state('app.login', {
+          .state('login', {
               url: '/login',
-              controller: 'loginController',
               title: 'Login',
-              templateUrl: helper.basepath('login.html')
+              templateUrl: helper.basepath('accountControl/login.html')
           })
           .state('app.welcome', {
               url: '/welcome',

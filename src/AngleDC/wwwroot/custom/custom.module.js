@@ -7,7 +7,8 @@
             'angle',
             // or just modules
             'app.core',
-            'app.sidebar'
+            'app.sidebar',
+            'LocalStorageModule'
             /*...*/
-        ]);
+        ]);    
 })();
