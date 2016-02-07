@@ -5,8 +5,8 @@
         .module('custom')
         .controller('LoginFormController', LoginFormController);
 
-    LoginFormController.$inject = ['$scope', '$log','$location', 'authService'];
-    function LoginFormController($scope, $log,$location, authService) {
+    LoginFormController.$inject = ['$scope','$state', '$log','$location', 'authService'];
+    function LoginFormController($scope,$state, $log,$location, authService) {
         // for controllerAs syntax
         var vm = this;
 
@@ -31,7 +31,7 @@
 
                 authService.login(vm.account).then(function (response) {
 
-                    $location.path('/app');
+                    $state.go('app.welcome');
 
                 },
                  function (err) {

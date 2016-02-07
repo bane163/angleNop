@@ -12,8 +12,8 @@
       // Global Settings
       // -----------------------------------
       $rootScope.app = {
-        name: 'Angle',
-        description: 'Angular Bootstrap Admin Template',
+        name: 'Freeman Daycare',
+        description: 'A Daycare Admin Tool',
         year: ((new Date()).getFullYear()),
         layout: {
           isFixed: true,

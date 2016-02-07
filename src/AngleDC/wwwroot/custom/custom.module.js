@@ -8,7 +8,8 @@
             // or just modules
             'app.core',
             'app.sidebar',
-            'LocalStorageModule'
+            'LocalStorageModule',
+            'ngPassword'
             /*...*/
         ]);    
 })();

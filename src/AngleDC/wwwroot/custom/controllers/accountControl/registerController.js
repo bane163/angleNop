@@ -20,15 +20,21 @@
             vm.savedSuccessfully = false;
             vm.message = "";
 
-            vm.registration = {
+            vm.account = {
                 userName: "",
+                email: "",
                 password: "",
-                confirmPassword: ""
+                confirmPassword: "",
+                agreed: ""
             };
 
-            vm.signUp = function () {
+            vm.register = function () {
 
-                authService.saveRegistration(vm.registration).then(function (response) {
+                vm.account.password = vm.register.password;
+                vm.account.confirmPassword = vm.register.account_password_confirm;
+                vm.account.userName = vm.account.email;
+
+                authService.saveRegistration(vm.account).then(function (response) {
 
                     vm.savedSuccessfully = true;
                     vm.message = "User has been registered successfully, you will be redicted to login page in 2 seconds.";

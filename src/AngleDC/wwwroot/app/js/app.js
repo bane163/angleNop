@@ -70,13 +70,13 @@
     'use strict';
 
     angular
-        .module('app.maps', []);
+        .module('app.loadingbar', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.loadingbar', []);
+        .module('app.maps', []);
 })();
 (function() {
     'use strict';
@@ -343,6 +343,50 @@
 
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
+
+    }
+
+})();
 /**=========================================================
  * Module: modals.js
  * Provides a simple way to implement bootstrap modals from templates
@@ -508,50 +552,6 @@
     }
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
-
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
-    }
-
-})();
 
 (function() {
     'use strict';
@@ -1574,7 +1574,7 @@
  =========================================================*/
 
 
-(function() {
+(function () {
     'use strict';
 
     angular
@@ -1582,8 +1582,8 @@
         .config(routesConfig);
 
     routesConfig.$inject = ['$stateProvider', '$locationProvider', '$urlRouterProvider', 'RouteHelpersProvider'];
-    function routesConfig($stateProvider, $locationProvider, $urlRouterProvider, helper){
-        
+    function routesConfig($stateProvider, $locationProvider, $urlRouterProvider, helper) {
+
         // Set the following to true to enable the HTML5 Mode
         // You may have to set <base> tag in index and a routing configuration in your server
         $locationProvider.html5Mode(false);
@@ -1595,16 +1595,25 @@
         // Application Routes
         // -----------------------------------   
         $stateProvider
+          .state('login', {
+                url: '/login',
+                title: 'Login',
+                templateUrl: helper.basepath('accountControl/login.html')
+            })
+          .state('register', {
+              url: '/register',
+              title: 'Register',
+              templateUrl: helper.basepath('accountControl/register.html')
+          })
           .state('app', {
               url: '/app',
               abstract: true,
               templateUrl: helper.basepath('app.html'),
-              resolve: helper.resolveFor('modernizr', 'icons')
-          })
-          .state('login', {
-              url: '/login',
-              title: 'Login',
-              templateUrl: helper.basepath('accountControl/login.html')
+              resolve: angular.extend(
+                 helper.resolveFor('modernizr', 'icons'), {
+                     loginRequired:loginRequired
+                 }
+               )
           })
           .state('app.welcome', {
               url: '/welcome',
@@ -1621,63 +1630,77 @@
           // Material 
           // ----------------------------------- 
           .state('app.cards', {
-            url: '/cards',
-            title: 'Material Cards',
-            templateUrl: helper.basepath( 'material.cards.html' )
+              url: '/cards',
+              title: 'Material Cards',
+              templateUrl: helper.basepath('material.cards.html')
           })
           .state('app.forms', {
-            url: '/forms',
-            title: 'Material Forms',
-            templateUrl: helper.basepath( 'material.forms.html' )
+              url: '/forms',
+              title: 'Material Forms',
+              templateUrl: helper.basepath('material.forms.html')
           })
           .state('app.whiteframe', {
-            url: '/whiteframe',
-            title: 'Material Whiteframe',
-            templateUrl: helper.basepath( 'material.whiteframe.html' )
+              url: '/whiteframe',
+              title: 'Material Whiteframe',
+              templateUrl: helper.basepath('material.whiteframe.html')
           })
           .state('app.matcolors', {
-            url: '/matcolors',
-            title: 'Material Colors',
-            templateUrl: helper.basepath( 'material.colors.html' )
+              url: '/matcolors',
+              title: 'Material Colors',
+              templateUrl: helper.basepath('material.colors.html')
           })
           .state('app.lists', {
-            url: '/lists',
-            title: 'Material Lists',
-            templateUrl: helper.basepath( 'material.lists.html' )
+              url: '/lists',
+              title: 'Material Lists',
+              templateUrl: helper.basepath('material.lists.html')
           })
           .state('app.inputs', {
-            url: '/inputs',
-            title: 'Material Inputs',
-            templateUrl: helper.basepath( 'material.inputs.html' )
+              url: '/inputs',
+              title: 'Material Inputs',
+              templateUrl: helper.basepath('material.inputs.html')
           })
           .state('app.matwidgets', {
-            url: '/matwidgets',
-            title: 'Material Widgets',
-            templateUrl: helper.basepath( 'material.widgets.html' ),
-            resolve: helper.resolveFor('weather-icons', 'loadGoogleMapsJS', function() { return loadGoogleMaps(); }, 'ui.map')
+              url: '/matwidgets',
+              title: 'Material Widgets',
+              templateUrl: helper.basepath('material.widgets.html'),
+              resolve: helper.resolveFor('weather-icons', 'loadGoogleMapsJS', function () { return loadGoogleMaps(); }, 'ui.map')
           })
           .state('app.ngmaterial', {
-            url: '/ngmaterial',
-            title: 'ngMaterial',
-            templateUrl: helper.basepath( 'material.ngmaterial.html' )
-          })    
-          // 
-          // CUSTOM RESOLVES
-          //   Add your own resolves properties
-          //   following this object extend
-          //   method
-          // ----------------------------------- 
-          // .state('app.someroute', {
-          //   url: '/some_url',
-          //   templateUrl: 'path_to_template.html',
-          //   controller: 'someController',
-          //   resolve: angular.extend(
-          //     helper.resolveFor(), {
-          //     // YOUR RESOLVES GO HERE
-          //     }
-          //   )
-          // })
-          ;
+              url: '/ngmaterial',
+              title: 'ngMaterial',
+              templateUrl: helper.basepath('material.ngmaterial.html')
+          })
+
+        function loginRequired($location, $q, authService) {
+            var deferred = $q.defer();
+
+            if (!authService.authentication.isAuth) {
+                deferred.reject()
+                $location.path('/login');
+            } else {
+                deferred.resolve();
+            }
+
+            return deferred.promise;
+        }
+
+        // 
+        // CUSTOM RESOLVES
+        //   Add your own resolves properties
+        //   following this object extend
+        //   method
+        // ----------------------------------- 
+        // .state('app.someroute', {
+        //   url: '/some_url',
+        //   templateUrl: 'path_to_template.html',
+        //   controller: 'someController',
+        //   resolve: angular.extend(
+        //     helper.resolveFor(), {
+        //     // YOUR RESOLVES GO HERE
+        //     }
+        //   )
+        // })
+        ;
 
     } // routesConfig
 
@@ -1698,8 +1721,8 @@
       // Global Settings
       // -----------------------------------
       $rootScope.app = {
-        name: 'Angle',
-        description: 'Angular Bootstrap Admin Template',
+        name: 'Freeman Daycare',
+        description: 'A Daycare Admin Tool',
         year: ((new Date()).getFullYear()),
         layout: {
           isFixed: true,
@@ -2601,7 +2624,8 @@
             // or just modules
             'app.core',
             'app.sidebar',
-            'LocalStorageModule'
+            'LocalStorageModule',
+            'ngPassword'
             /*...*/
         ]);    
 })();
@@ -2657,6 +2681,22 @@
         }
     }
 })();
+
+(function () {
+	'use strict';
+
+	angular
+        .module('custom')
+        .run(appCustomRun);
+
+	appCustomRun.$inject = ['authService'];
+
+	function appCustomRun(authService) {
+		authService.fillAuthData();
+	}
+
+})();
+
 
 /**
  * An Angular module that gives you access to the browsers local storage
@@ -3114,6 +3154,54 @@ angularLocalStorage.provider('localStorageService', function() {
  * @author grevory <greg@gregpike.ca>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */!function(a,b){"use strict";var c=b.isDefined,d=b.isUndefined,e=b.isNumber,f=b.isObject,g=b.isArray,h=b.extend,i=b.toJson,j=b.module("LocalStorageModule",[]);j.provider("localStorageService",function(){this.prefix="ls",this.storageType="localStorage",this.cookie={expiry:30,path:"/"},this.notify={setItem:!0,removeItem:!1},this.setPrefix=function(a){return this.prefix=a,this},this.setStorageType=function(a){return this.storageType=a,this},this.setStorageCookie=function(a,b){return this.cookie.expiry=a,this.cookie.path=b,this},this.setStorageCookieDomain=function(a){return this.cookie.domain=a,this},this.setNotify=function(a,b){return this.notify={setItem:a,removeItem:b},this},this.$get=["$rootScope","$window","$document","$parse",function(a,b,j,k){var l,m=this,n=m.prefix,o=m.cookie,p=m.notify,q=m.storageType;j?j[0]&&(j=j[0]):j=document,"."!==n.substr(-1)&&(n=n?n+".":"");var r=function(a){return n+a},s=function(){try{var c=q in b&&null!==b[q],d=r("__"+Math.round(1e7*Math.random()));return c&&(l=b[q],l.setItem(d,""),l.removeItem(d)),c}catch(e){return q="cookie",a.$broadcast("LocalStorageModule.notification.error",e.message),!1}}(),t=function(b,c){if(c=d(c)?null:i(c),!s||"cookie"===m.storageType)return s||a.$broadcast("LocalStorageModule.notification.warning","LOCAL_STORAGE_NOT_SUPPORTED"),p.setItem&&a.$broadcast("LocalStorageModule.notification.setitem",{key:b,newvalue:c,storageType:"cookie"}),z(b,c);try{l&&l.setItem(r(b),c),p.setItem&&a.$broadcast("LocalStorageModule.notification.setitem",{key:b,newvalue:c,storageType:m.storageType})}catch(e){return a.$broadcast("LocalStorageModule.notification.error",e.message),z(b,c)}return!0},u=function(b){if(!s||"cookie"===m.storageType)return s||a.$broadcast("LocalStorageModule.notification.warning","LOCAL_STORAGE_NOT_SUPPORTED"),A(b);var c=l?l.getItem(r(b)):null;if(!c||"null"===c)return null;try{return JSON.parse(c)}catch(d){return c}},v=function(){var b,c;for(b=0;b<arguments.length;b++)if(c=arguments[b],s&&"cookie"!==m.storageType)try{l.removeItem(r(c)),p.removeItem&&a.$broadcast("LocalStorageModule.notification.removeitem",{key:c,storageType:m.storageType})}catch(d){a.$broadcast("LocalStorageModule.notification.error",d.message),B(c)}else s||a.$broadcast("LocalStorageModule.notification.warning","LOCAL_STORAGE_NOT_SUPPORTED"),p.removeItem&&a.$broadcast("LocalStorageModule.notification.removeitem",{key:c,storageType:"cookie"}),B(c)},w=function(){if(!s)return a.$broadcast("LocalStorageModule.notification.warning","LOCAL_STORAGE_NOT_SUPPORTED"),!1;var b=n.length,c=[];for(var d in l)if(d.substr(0,b)===n)try{c.push(d.substr(b))}catch(e){return a.$broadcast("LocalStorageModule.notification.error",e.Description),[]}return c},x=function(b){var c=n?new RegExp("^"+n):new RegExp,d=b?new RegExp(b):new RegExp;if(!s||"cookie"===m.storageType)return s||a.$broadcast("LocalStorageModule.notification.warning","LOCAL_STORAGE_NOT_SUPPORTED"),C();var e=n.length;for(var f in l)if(c.test(f)&&d.test(f.substr(e)))try{v(f.substr(e))}catch(g){return a.$broadcast("LocalStorageModule.notification.error",g.message),C()}return!0},y=function(){try{return b.navigator.cookieEnabled||"cookie"in j&&(j.cookie.length>0||(j.cookie="test").indexOf.call(j.cookie,"test")>-1)}catch(c){return a.$broadcast("LocalStorageModule.notification.error",c.message),!1}}(),z=function(b,c,h){if(d(c))return!1;if((g(c)||f(c))&&(c=i(c)),!y)return a.$broadcast("LocalStorageModule.notification.error","COOKIES_NOT_SUPPORTED"),!1;try{var k="",l=new Date,m="";if(null===c?(l.setTime(l.getTime()+-864e5),k="; expires="+l.toGMTString(),c=""):e(h)&&0!==h?(l.setTime(l.getTime()+24*h*60*60*1e3),k="; expires="+l.toGMTString()):0!==o.expiry&&(l.setTime(l.getTime()+24*o.expiry*60*60*1e3),k="; expires="+l.toGMTString()),b){var n="; path="+o.path;o.domain&&(m="; domain="+o.domain),j.cookie=r(b)+"="+encodeURIComponent(c)+k+n+m}}catch(p){return a.$broadcast("LocalStorageModule.notification.error",p.message),!1}return!0},A=function(b){if(!y)return a.$broadcast("LocalStorageModule.notification.error","COOKIES_NOT_SUPPORTED"),!1;for(var c=j.cookie&&j.cookie.split(";")||[],d=0;d<c.length;d++){for(var e=c[d];" "===e.charAt(0);)e=e.substring(1,e.length);if(0===e.indexOf(r(b)+"=")){var f=decodeURIComponent(e.substring(n.length+b.length+1,e.length));try{return JSON.parse(f)}catch(g){return f}}}return null},B=function(a){z(a,null)},C=function(){for(var a=null,b=n.length,c=j.cookie.split(";"),d=0;d<c.length;d++){for(a=c[d];" "===a.charAt(0);)a=a.substring(1,a.length);var e=a.substring(b,a.indexOf("="));B(e)}},D=function(){return q},E=function(a,b,d,e){e=e||b;var g=u(e);return null===g&&c(d)?g=d:f(g)&&f(d)&&(g=h(d,g)),k(b).assign(a,g),a.$watch(b,function(a){t(e,a)},f(a[b]))},F=function(){for(var a=0,c=b[q],d=0;d<c.length;d++)0===c.key(d).indexOf(n)&&a++;return a};return{isSupported:s,getStorageType:D,set:t,add:t,get:u,keys:w,remove:v,clearAll:x,bind:E,deriveKey:r,length:F,cookie:{isSupported:y,set:z,add:z,get:A,remove:B,clearAll:C}}}]})}(window,window.angular);
+!function(angular, undefined) {
+  'use strict';
+
+  function $Password() {
+
+    function link(scope, element, attrs, ctrls) {
+      var formController = ctrls[1];
+      var ngModel = ctrls[0];
+      var otherPasswordModel = formController[attrs.matchPassword];
+
+      // if ng1.3+
+      if (ngModel.$validators) {
+        ngModel.$validators.passwordMatch = function(modelValue) {
+          return (modelValue === otherPasswordModel.$modelValue);
+        };
+      } else {
+        ngModel.$parsers.push(function(value) {
+          ngModel.$setValidity('passwordMatch', value === otherPasswordModel.$viewValue);
+          return value;
+        });
+      }
+
+      otherPasswordModel.$parsers.push(function(value) {
+        ngModel.$setValidity('passwordMatch', value === ngModel.$viewValue);
+        return value;
+      });
+    }
+
+    var controllers = ['^ngModel', '^form'];
+
+    return {
+      restrict: 'A',
+      require: controllers,
+      link: link
+    }; // end return
+  }
+
+  angular.module('ngPassword', []).directive('matchPassword', $Password);
+
+  angular.module('angular.password', ['ngPassword']);
+  angular.module('angular-password', ['ngPassword']);
+
+  if (typeof module === 'object' && typeof define !== 'function') {
+    module.exports = angular.module('ngPassword');
+  }
+}(angular);
+
+!function(a,b){"use strict";function c(){function a(a,b,c,d){var e=d[1],f=d[0],g=e[c.matchPassword];f.$validators?f.$validators.passwordMatch=function(a){return a===g.$modelValue}:f.$parsers.push(function(a){return f.$setValidity("passwordMatch",a===g.$viewValue),a}),g.$parsers.push(function(a){return f.$setValidity("passwordMatch",a===f.$viewValue),a})}var b=["^ngModel","^form"];return{restrict:"A",require:b,link:a}}a.module("ngPassword",[]).directive("matchPassword",c),a.module("angular.password",["ngPassword"]),a.module("angular-password",["ngPassword"]),"object"==typeof module&&"function"!=typeof define&&(module.exports=a.module("ngPassword"))}(angular);
 
 //window.common = (function () {
 //    var common = {};
@@ -3400,8 +3488,8 @@ angularLocalStorage.provider('localStorageService', function() {
         .module('custom')
         .controller('LoginFormController', LoginFormController);
 
-    LoginFormController.$inject = ['$scope', '$log','$location', 'authService'];
-    function LoginFormController($scope, $log,$location, authService) {
+    LoginFormController.$inject = ['$scope','$state', '$log','$location', 'authService'];
+    function LoginFormController($scope,$state, $log,$location, authService) {
         // for controllerAs syntax
         var vm = this;
 
@@ -3426,7 +3514,7 @@ angularLocalStorage.provider('localStorageService', function() {
 
                 authService.login(vm.account).then(function (response) {
 
-                    $location.path('/app');
+                    $state.go('app.welcome');
 
                 },
                  function (err) {
@@ -3459,15 +3547,21 @@ angularLocalStorage.provider('localStorageService', function() {
             vm.savedSuccessfully = false;
             vm.message = "";
 
-            vm.registration = {
+            vm.account = {
                 userName: "",
+                email: "",
                 password: "",
-                confirmPassword: ""
+                confirmPassword: "",
+                agreed: ""
             };
 
-            vm.signUp = function () {
+            vm.register = function () {
 
-                authService.saveRegistration(vm.registration).then(function (response) {
+                vm.account.password = vm.register.password;
+                vm.account.confirmPassword = vm.register.account_password_confirm;
+                vm.account.userName = vm.account.email;
+
+                authService.saveRegistration(vm.account).then(function (response) {
 
                     vm.savedSuccessfully = true;
                     vm.message = "User has been registered successfully, you will be redicted to login page in 2 seconds.";
