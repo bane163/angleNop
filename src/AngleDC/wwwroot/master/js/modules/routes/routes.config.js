@@ -19,18 +19,25 @@
         $locationProvider.html5Mode(false);
 
         // defaults to dashboard
-        $urlRouterProvider.otherwise('/login');
+        $urlRouterProvider.otherwise('/page/login');
+        
 
         // 
         // Application Routes
         // -----------------------------------   
         $stateProvider
-          .state('login', {
+           .state('page', {
+                url: '/page',
+                abstract: true,
+                resolve: helper.resolveFor('modernizr', 'icons'),
+                templateUrl: helper.basepath('page.html')
+            })
+          .state('page.login', {
                 url: '/login',
                 title: 'Login',
                 templateUrl: helper.basepath('accountControl/login.html')
             })
-          .state('register', {
+          .state('page.register', {
               url: '/register',
               title: 'Register',
               templateUrl: helper.basepath('accountControl/register.html')
@@ -41,9 +48,10 @@
               templateUrl: helper.basepath('app.html'),
               resolve: angular.extend(
                  helper.resolveFor('modernizr', 'icons'), {
-                     loginRequired:loginRequired
+                     loginRequired: loginRequired
                  }
                )
+
           })
           .state('app.welcome', {
               url: '/welcome',
@@ -101,12 +109,15 @@
               templateUrl: helper.basepath('material.ngmaterial.html')
           })
 
-        function loginRequired($location, $q, authService) {
+        function loginRequired($location, $q, $timeout, $state, authService) {
             var deferred = $q.defer();
 
             if (!authService.authentication.isAuth) {
                 deferred.reject()
-                $location.path('/login');
+                var timer = $timeout(function () {
+                    $timeout.cancel(timer);
+                    $location.path('/login');
+                }, 5000);
             } else {
                 deferred.resolve();
             }
