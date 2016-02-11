@@ -77,6 +77,7 @@ namespace AspNetIdentity.WebApi.Controllers
                 LastName = createUserModel.LastName,
                 Level = 3,
                 JoinDate = DateTime.Now.Date,
+                Agreed = createUserModel.Agreed
             };
 
 

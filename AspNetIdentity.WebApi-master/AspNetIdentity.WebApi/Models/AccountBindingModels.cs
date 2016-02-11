@@ -39,6 +39,10 @@ namespace AspNetIdentity.WebApi.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [Required]
+        [Display(Name = "Agreed")]
+        public bool Agreed { get; set; }
     }
 
     public class ChangePasswordBindingModel

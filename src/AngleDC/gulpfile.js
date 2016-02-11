@@ -187,7 +187,7 @@ gulp.task('vendor:app', function () {
     var jsFilter = $.filter('**/*.js');
     var cssFilter = $.filter('**/*.css');
 
-    return gulp.src(vendor.app.source, { base: 'bower_components' })
+    return gulp.src(vendor.app.source, { base: 'lib' })
         .pipe($.expectFile(vendor.app.source))
         .pipe(jsFilter)
         .pipe($.if(isProduction, $.uglify(vendorUglifyOpts)))

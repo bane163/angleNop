@@ -55,6 +55,14 @@ namespace AngularJSAuthentication.API.Controllers
              return Ok();
         }
 
+        //GET api/Account/GetUsers
+        [Authorize]
+        [Route("GetUsers")]
+        public IHttpActionResult GetUsers()
+        {
+            return Ok(_repo.GetAllUsers());
+        }
+
         // GET api/Account/ExternalLogin
         [OverrideAuthentication]
         [HostAuthentication(DefaultAuthenticationTypes.ExternalCookie)]

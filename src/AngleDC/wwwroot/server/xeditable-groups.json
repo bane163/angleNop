@@ -1,0 +1,19 @@
+﻿[{
+  "id": 1,
+  "text": "user"
+}, {
+  "id": 2,
+  "text": "mother"
+}, {
+  "id": 3,
+  "text": "father"
+}, {
+  "id": 4,
+  "text": "guardian"
+}, {
+  "id": 5,
+  "text": "child"
+}, {
+  "id": 6,
+  "text": "admin"
+}]

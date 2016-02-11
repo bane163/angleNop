@@ -26,7 +26,7 @@
 
             _logOut();
 
-            return $http.post(serviceBase + 'api/account/register', registration).then(function (response) {
+            return $http.post(serviceBase + 'api/accounts/create', registration).then(function (response) {
                 return response;
             });
 
@@ -42,7 +42,7 @@
 
             var deferred = $q.defer();
 
-            $http.post(serviceBase + 'token', data, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).success(function (response) {
+            $http.post(serviceBase + 'oauth/token', data, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).success(function (response) {
 
                 if (loginData.useRefreshTokens) {
                     localStorageService.set('authorizationData', { token: response.access_token, userName: loginData.userName, refreshToken: response.refresh_token, useRefreshTokens: true });
@@ -161,6 +161,20 @@
 
         };
 
+        var _getAllUsers = function () {
+            var deferred = $q.defer();
+
+            $http.get(serviceBase + 'api/accounts/users', {}).success(function (response) {
+
+                deferred.resolve(response);
+
+            }).error(function (err, status) {
+                deferred.reject(err);
+            });
+
+            return deferred.promise;
+        }
+
         authServiceFactory.saveRegistration = _saveRegistration;
         authServiceFactory.login = _login;
         authServiceFactory.logOut = _logOut;
@@ -171,6 +185,7 @@
         authServiceFactory.obtainAccessToken = _obtainAccessToken;
         authServiceFactory.externalAuthData = _externalAuthData;
         authServiceFactory.registerExternal = _registerExternal;
+        authServiceFactory.getAllUsers = _getAllUsers;
 
         return authServiceFactory;
     }

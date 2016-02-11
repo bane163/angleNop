@@ -9,7 +9,7 @@
             'app.core',
             'app.sidebar',
             'LocalStorageModule',
-            'ngPassword'
+            'ngPassword'            
             /*...*/
         ]);    
 })();

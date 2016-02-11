@@ -12,7 +12,8 @@ namespace AspNetIdentity.WebApi.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
+            AutomaticMigrationDataLossAllowed = true;
         }
 
         protected override void Seed(AspNetIdentity.WebApi.Infrastructure.ApplicationDbContext context)
@@ -43,7 +44,7 @@ namespace AspNetIdentity.WebApi.Migrations
                 roleManager.Create(new IdentityRole { Name = "User"});
             }
 
-            var adminUser = manager.FindByName("SuperPowerUser");
+            var adminUser = manager.FindByName("bane163@yahoo.com");
 
             manager.AddToRoles(adminUser.Id, new string[] { "SuperAdmin", "Admin" });
         }

@@ -48,7 +48,7 @@
                              errors.push(response.data.modelState[key][i]);
                          }
                      }
-                     vm.message = "Failed to register user due to:" + errors.join(' ');
+                     vm.authMsg = "Failed to register user due to:" + errors.join(' ');
                  });
             };
 

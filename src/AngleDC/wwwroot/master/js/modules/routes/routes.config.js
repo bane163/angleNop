@@ -108,6 +108,13 @@
               title: 'ngMaterial',
               templateUrl: helper.basepath('material.ngmaterial.html')
           })
+         .state('app.users', {
+              url: '/user-grid',
+              title: 'Users',
+              controller: 'UserGridController',
+              resolve: helper.resolveFor('xeditable'),
+              templateUrl: helper.basepath('user-grid/user-grid.html')
+          })
 
         function loginRequired($location, $q, $timeout, $state, authService) {
             var deferred = $q.defer();

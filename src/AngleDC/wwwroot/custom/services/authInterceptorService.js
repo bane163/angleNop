@@ -25,6 +25,9 @@
             if (rejection.status === 401) {
                 $location.path('/login');
             }
+            else if (rejection.status === 400) {
+
+            }
             return $q.reject(rejection);
         }
 
