@@ -11,8 +11,8 @@
         .module('custom')
         .controller('UserGridController', UserGridController);
 
-    UserGridController.$inject = ['$filter', '$http', 'editableOptions', 'editableThemes', '$q', '$log', 'authService', 'roleService'];
-    function UserGridController($filter, $http, editableOptions, editableThemes, $q, $log, authService, roleService) {
+    UserGridController.$inject = ['$scope', '$filter', '$http', 'editableOptions', 'editableThemes', '$q', '$log', 'authService', 'roleService'];
+    function UserGridController($scope, $filter, $http, editableOptions, editableThemes, $q, $log, authService, roleService) {
         var vm = this;
 
         activate();
@@ -168,6 +168,13 @@
 
                 return $q.all(results);
             };
+
+            vm.search = "";
+
+            $scope.$on('rootScope:search', function (event, data) {
+                console.log(data); // 'Broadcast!'
+                $scope.search = data;
+            });
 
         }
     }

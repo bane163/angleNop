@@ -29,7 +29,7 @@
            .state('page', {
                 url: '/page',
                 abstract: true,
-                resolve: helper.resolveFor('modernizr', 'icons'),
+                resolve: helper.resolveFor('modernizr', 'icons', 'toaster'),
                 templateUrl: helper.basepath('page.html')
             })
           .state('page.login', {

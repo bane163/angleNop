@@ -6,7 +6,7 @@
         .controller('LoginFormController', LoginFormController);
 
     LoginFormController.$inject = ['$scope','$state', '$log','$location', 'authService'];
-    function LoginFormController($scope,$state, $log,$location, authService) {
+    function LoginFormController($scope, $state, $log, $location, authService) {
         // for controllerAs syntax
         var vm = this;
 
