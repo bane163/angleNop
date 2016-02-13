@@ -47,7 +47,7 @@
               abstract: true,
               templateUrl: helper.basepath('app.html'),
               resolve: angular.extend(
-                 helper.resolveFor('modernizr', 'icons'), {
+                 helper.resolveFor('modernizr', 'icons', 'toaster'), {
                      loginRequired: loginRequired
                  }
                )

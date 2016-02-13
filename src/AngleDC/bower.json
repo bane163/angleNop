@@ -53,7 +53,8 @@
     "angular-password": "1.0.1",
     "angularjs-toaster": "1.1.0",
     "angular-xeditable": "0.1.9",
-    "angular-utils-pagination": "0.10.0"
+    "angular-utils-pagination": "0.10.0",
+    "angular-toArrayFilter": "1.0.1"
   },
   "resolutions": {
     "angular": "1.4.7",

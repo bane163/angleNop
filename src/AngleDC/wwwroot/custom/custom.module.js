@@ -10,7 +10,8 @@
             'app.sidebar',
             'LocalStorageModule',
             'ngPassword',
-            'angularUtils.directives.dirPagination'
+            'angularUtils.directives.dirPagination',
+            'angular-toArrayFilter'
             /*...*/
         ]);    
 })();

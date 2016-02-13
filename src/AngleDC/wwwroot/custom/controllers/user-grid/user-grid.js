@@ -11,8 +11,8 @@
         .module('custom')
         .controller('UserGridController', UserGridController);
 
-    UserGridController.$inject = ['$scope', '$filter', '$http', 'editableOptions', 'editableThemes', '$q', '$log', 'authService', 'roleService'];
-    function UserGridController($scope, $filter, $http, editableOptions, editableThemes, $q, $log, authService, roleService) {
+    UserGridController.$inject = ['$scope', '$filter', '$http', 'editableOptions', 'editableThemes', '$q', '$log', 'authService', 'roleService', 'toaster'];
+    function UserGridController($scope, $filter, $http, editableOptions, editableThemes, $q, $log, authService, roleService, toaster) {
         var vm = this;
 
         activate();
@@ -81,9 +81,30 @@
 
             vm.saveUser = function (data, id) {
                 //vm.user not updated yet
+                var account = {
+                    userName: data.userName,
+                    firstName: "",
+                    lastName: "",
+                    email: data.userName,
+                    password: "",
+                    confirmPassword: "",
+                    agreed: false
+                };
                 angular.extend(data, { id: id });
                 console.log('Saving user: ' + id);
-                // return $http.post('/saveUser', data);
+                authService.saveRegistration(account).then(function (response) {
+                    var resp = response;                    
+                    toaster.pop('success', "success", "User added successfully");
+                },
+                 function (response) {
+                     var errors = [];
+                     for (var key in response.data.modelState) {
+                         for (var i = 0; i < response.data.modelState[key].length; i++) {
+                             errors.push(response.data.modelState[key][i]);
+                         }
+                     }
+                     toaster.pop('error', "Failed", "Failed to register user due to:" + errors.join(' '));
+                 });
             };
 
             // remove user
@@ -168,8 +189,6 @@
 
                 return $q.all(results);
             };
-
-            vm.search = "";
 
             $scope.$on('rootScope:search', function (event, data) {
                 console.log(data); // 'Broadcast!'

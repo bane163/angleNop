@@ -58,7 +58,7 @@
    <!-- START Search form-->
    <form role="search" action="" class="navbar-form">
       <div class="form-group has-feedback">
-         <input type="text" placeholder="{{ 'topbar.search.PLACEHOLDER' | translate }}" ng-model="search" ng-change="updateSearch()" class="form-control" />
+         <input type="text" placeholder="{{ 'topbar.search.PLACEHOLDER' | translate }}" ng-model="search.$" ng-change="updateSearch()" class="form-control" />
          <div search-dismiss="search-dismiss" class="fa fa-times form-control-feedback"></div>
       </div>
       <button type="submit" class="hidden btn btn-default">Submit</button>
