@@ -25,7 +25,14 @@
             return deferred.promise;
         }
 
+        var _assignRolesToUser = function (id, rolesToAssign) {
+            return $http.post(serviceBase + 'api/accounts/create', registration).then(function (response) {
+                return response;
+            });
+        }
+
         rolesServiceFactory.getRoles = _getRoles;
+        rolesServiceFactory.assignRolesToUser = _assignRolesToUser;
 
         return rolesServiceFactory;
     }

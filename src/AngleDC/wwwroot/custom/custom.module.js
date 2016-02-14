@@ -8,6 +8,7 @@
             // or just modules
             'app.core',
             'app.sidebar',
+            'app.elements',
             'LocalStorageModule',
             'ngPassword',
             'angularUtils.directives.dirPagination',

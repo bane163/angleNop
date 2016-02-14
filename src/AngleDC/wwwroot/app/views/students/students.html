@@ -1,0 +1,13 @@
+﻿<div ng-controller="StudentController as sc" class="row-masonry row-masonry-xl-6 row-masonry-lg-4 row-masonry-md-3 row-masonry-sm-2">
+    <div ng-repeat="item in sc.masonryItems" class="col-masonry">
+        <a href="">
+            <img src="" data-ng-src="{{item.img}}" class="img-thumbnail img-responsive" />
+        </a>
+        <div class="box-placeholder m0">
+            <p class="text-center text-muted">
+                <strong>{{item.title}}</strong>
+            </p>
+            <p>{{item.body}}</p>
+        </div>
+    </div>
+</div>

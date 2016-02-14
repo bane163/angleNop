@@ -76,15 +76,15 @@
     'use strict';
 
     angular
-        .module('app.material', [
-            'ngMaterial'
-          ]);
+        .module('app.maps', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.maps', []);
+        .module('app.material', [
+            'ngMaterial'
+          ]);
 })();
 (function() {
     'use strict';
@@ -98,21 +98,15 @@
     'use strict';
 
     angular
-        .module('app.navsearch', []);
+        .module('app.routes', [
+            'app.lazyload'
+        ]);
 })();
 (function() {
     'use strict';
 
     angular
         .module('app.settings', []);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.routes', [
-            'app.lazyload'
-        ]);
 })();
 (function() {
     'use strict';
@@ -125,6 +119,12 @@
 
     angular
         .module('app.translate', []);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch', []);
 })();
 (function() {
     'use strict';
@@ -331,13 +331,14 @@
                                    'vendor/simple-line-icons/css/simple-line-icons.css'],
             'weather-icons':      ['vendor/weather-icons/css/weather-icons.min.css',
                                    'vendor/weather-icons/css/weather-icons-wind.min.css'],
-            'loadGoogleMapsJS':   ['vendor/load-google-maps/load-google-maps.js']
+            'loadGoogleMapsJS': ['vendor/load-google-maps/load-google-maps.js']
           },
           // Angular based script (use the right module name)
           modules: [
             {name: 'toaster', files: ['vendor/angularjs-toaster/toaster.js', 'vendor/angularjs-toaster/toaster.css']},
             { name: 'ui.map', files: ['vendor/angular-ui-map/ui-map.js'] },
-            { name: 'xeditable', files: ['vendor/angular-xeditable/dist/js/xeditable.js', 'vendor/angular-xeditable/dist/css/xeditable.css']}
+            { name: 'xeditable', files: ['vendor/angular-xeditable/dist/js/xeditable.js', 'vendor/angular-xeditable/dist/css/xeditable.css'] },
+            { name: 'akoenig.deckgrid', files: ['vendor/angular-deckgrid/angular-deckgrid.js'] },
           ]
         })
         ;
@@ -388,6 +389,171 @@
     }
 
 })();
+/**=========================================================
+ * Module: modals.js
+ * Provides a simple way to implement bootstrap modals from templates
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps')
+        .controller('ModalGmapController', ModalGmapController);
+
+    ModalGmapController.$inject = ['$modal'];
+    function ModalGmapController($modal) {
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+
+          vm.open = function (size) {
+
+            //var modalInstance = 
+            $modal.open({
+              templateUrl: '/myModalContent.html',
+              controller: ModalInstanceCtrl,
+              size: size
+            });
+          };
+
+          // Please note that $modalInstance represents a modal window (instance) dependency.
+          // It is not the same as the $modal service used above.
+          
+          ModalInstanceCtrl.$inject = ['$scope', '$modalInstance', '$timeout'];
+          function ModalInstanceCtrl($scope, $modalInstance, $timeout) {
+
+            $modalInstance.opened.then(function () {
+              var position = new google.maps.LatLng(33.790807, -117.835734);
+
+              $scope.mapOptionsModal = {
+                zoom: 14,
+                center: position,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+              };
+
+              // we use timeout to wait maps to be ready before add a markers
+              $timeout(function(){
+                // 1. Add a marker at the position it was initialized
+                new google.maps.Marker({
+                  map: $scope.myMapModal,
+                  position: position
+                });
+                // 2. Trigger a resize so the map is redrawed 
+                google.maps.event.trigger($scope.myMapModal, 'resize');
+                // 3. Move to the center if it is misaligned
+                $scope.myMapModal.panTo(position);
+              });
+
+            });
+
+            $scope.ok = function () {
+              $modalInstance.close('closed');
+            };
+
+            $scope.cancel = function () {
+              $modalInstance.dismiss('cancel');
+            };
+
+          }
+          
+        }
+    }
+
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.maps')
+        .controller('GMapController', GMapController);
+
+    GMapController.$inject = ['$timeout'];
+    function GMapController($timeout) {
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+          var position = [
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.790807, -117.835734),
+              new google.maps.LatLng(33.787453, -117.835858)
+            ];
+          
+          vm.addMarker = addMarker;
+          // we use timeout to wait maps to be ready before add a markers
+          $timeout(function(){
+            addMarker(vm.myMap1, position[0]);
+            addMarker(vm.myMap2, position[1]);
+            addMarker(vm.myMap3, position[2]);
+            addMarker(vm.myMap5, position[3]);
+          });
+
+          vm.mapOptions1 = {
+            zoom: 14,
+            center: position[0],
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: false
+          };
+
+          vm.mapOptions2 = {
+            zoom: 19,
+            center: position[1],
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+
+          vm.mapOptions3 = {
+            zoom: 14,
+            center: position[2],
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+          };
+
+          vm.mapOptions4 = {
+            zoom: 14,
+            center: position[3],
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+
+          // for multiple markers
+          $timeout(function(){
+            addMarker(vm.myMap4, position[3]);
+            addMarker(vm.myMap4, position[4]);
+          });
+
+          // custom map style
+          var MapStyles = [{'featureType':'water','stylers':[{'visibility':'on'},{'color':'#bdd1f9'}]},{'featureType':'all','elementType':'labels.text.fill','stylers':[{'color':'#334165'}]},{featureType:'landscape',stylers:[{color:'#e9ebf1'}]},{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#c5c6c6'}]},{featureType:'road.arterial',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'road.local',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'transit',elementType:'geometry',stylers:[{color:'#d8dbe0'}]},{featureType:'poi',elementType:'geometry',stylers:[{color:'#cfd5e0'}]},{featureType:'administrative',stylers:[{visibility:'on'},{lightness:33}]},{featureType:'poi.park',elementType:'labels',stylers:[{visibility:'on'},{lightness:20}]},{featureType:'road',stylers:[{color:'#d8dbe0',lightness:20}]}];
+          vm.mapOptions5 = {
+            zoom: 14,
+            center: position[3],
+            styles: MapStyles,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            scrollwheel: false
+          };
+
+          ///////////////
+          
+          function addMarker(map, position) {
+            return new google.maps.Marker({
+              map: map,
+              position: position
+            });
+          }
+
+        }
+    }
+})();
+
 
 (function() {
     'use strict';
@@ -1118,171 +1284,6 @@
         }
     }
 })();
-/**=========================================================
- * Module: modals.js
- * Provides a simple way to implement bootstrap modals from templates
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.maps')
-        .controller('ModalGmapController', ModalGmapController);
-
-    ModalGmapController.$inject = ['$modal'];
-    function ModalGmapController($modal) {
-        var vm = this;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-
-          vm.open = function (size) {
-
-            //var modalInstance = 
-            $modal.open({
-              templateUrl: '/myModalContent.html',
-              controller: ModalInstanceCtrl,
-              size: size
-            });
-          };
-
-          // Please note that $modalInstance represents a modal window (instance) dependency.
-          // It is not the same as the $modal service used above.
-          
-          ModalInstanceCtrl.$inject = ['$scope', '$modalInstance', '$timeout'];
-          function ModalInstanceCtrl($scope, $modalInstance, $timeout) {
-
-            $modalInstance.opened.then(function () {
-              var position = new google.maps.LatLng(33.790807, -117.835734);
-
-              $scope.mapOptionsModal = {
-                zoom: 14,
-                center: position,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-              };
-
-              // we use timeout to wait maps to be ready before add a markers
-              $timeout(function(){
-                // 1. Add a marker at the position it was initialized
-                new google.maps.Marker({
-                  map: $scope.myMapModal,
-                  position: position
-                });
-                // 2. Trigger a resize so the map is redrawed 
-                google.maps.event.trigger($scope.myMapModal, 'resize');
-                // 3. Move to the center if it is misaligned
-                $scope.myMapModal.panTo(position);
-              });
-
-            });
-
-            $scope.ok = function () {
-              $modalInstance.close('closed');
-            };
-
-            $scope.cancel = function () {
-              $modalInstance.dismiss('cancel');
-            };
-
-          }
-          
-        }
-    }
-
-})();
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.maps')
-        .controller('GMapController', GMapController);
-
-    GMapController.$inject = ['$timeout'];
-    function GMapController($timeout) {
-        var vm = this;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-          var position = [
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.790807, -117.835734),
-              new google.maps.LatLng(33.787453, -117.835858)
-            ];
-          
-          vm.addMarker = addMarker;
-          // we use timeout to wait maps to be ready before add a markers
-          $timeout(function(){
-            addMarker(vm.myMap1, position[0]);
-            addMarker(vm.myMap2, position[1]);
-            addMarker(vm.myMap3, position[2]);
-            addMarker(vm.myMap5, position[3]);
-          });
-
-          vm.mapOptions1 = {
-            zoom: 14,
-            center: position[0],
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            scrollwheel: false
-          };
-
-          vm.mapOptions2 = {
-            zoom: 19,
-            center: position[1],
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          };
-
-          vm.mapOptions3 = {
-            zoom: 14,
-            center: position[2],
-            mapTypeId: google.maps.MapTypeId.SATELLITE
-          };
-
-          vm.mapOptions4 = {
-            zoom: 14,
-            center: position[3],
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          };
-
-          // for multiple markers
-          $timeout(function(){
-            addMarker(vm.myMap4, position[3]);
-            addMarker(vm.myMap4, position[4]);
-          });
-
-          // custom map style
-          var MapStyles = [{'featureType':'water','stylers':[{'visibility':'on'},{'color':'#bdd1f9'}]},{'featureType':'all','elementType':'labels.text.fill','stylers':[{'color':'#334165'}]},{featureType:'landscape',stylers:[{color:'#e9ebf1'}]},{featureType:'road.highway',elementType:'geometry',stylers:[{color:'#c5c6c6'}]},{featureType:'road.arterial',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'road.local',elementType:'geometry',stylers:[{color:'#fff'}]},{featureType:'transit',elementType:'geometry',stylers:[{color:'#d8dbe0'}]},{featureType:'poi',elementType:'geometry',stylers:[{color:'#cfd5e0'}]},{featureType:'administrative',stylers:[{visibility:'on'},{lightness:33}]},{featureType:'poi.park',elementType:'labels',stylers:[{visibility:'on'},{lightness:20}]},{featureType:'road',stylers:[{color:'#d8dbe0',lightness:20}]}];
-          vm.mapOptions5 = {
-            zoom: 14,
-            center: position[3],
-            styles: MapStyles,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            scrollwheel: false
-          };
-
-          ///////////////
-          
-          function addMarker(map, position) {
-            return new google.maps.Marker({
-              map: map,
-              position: position
-            });
-          }
-
-        }
-    }
-})();
-
 (function() {
     'use strict';
 
@@ -1376,173 +1377,6 @@
     }
 
 })();
-/**=========================================================
- * Module: navbar-search.js
- * Navbar search toggler * Auto dismiss on ESC key
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .directive('searchOpen', searchOpen)
-        .directive('searchDismiss', searchDismiss);
-
-    //
-    // directives definition
-    // 
-    
-    function searchOpen () {
-        var directive = {
-            controller: searchOpenController,
-            restrict: 'A'
-        };
-        return directive;
-
-    }
-
-    function searchDismiss () {
-        var directive = {
-            controller: searchDismissController,
-            restrict: 'A'
-        };
-        return directive;
-        
-    }
-
-    //
-    // Contrller definition
-    // 
-    
-    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchOpenController ($scope, $element, NavSearch) {
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.toggle);
-    }
-
-    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchDismissController ($scope, $element, NavSearch) {
-      
-      var inputSelector = '.navbar-form input[type="text"]';
-
-      $(inputSelector)
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('keyup', function(e) {
-          if (e.keyCode === 27) // ESC
-            NavSearch.dismiss();
-        });
-        
-      // click anywhere closes the search
-      $(document).on('click', NavSearch.dismiss);
-      // dismissable options
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.dismiss);
-    }
-
-})();
-
-
-/**=========================================================
- * Module: nav-search.js
- * Services to share navbar search functions
- =========================================================*/
- 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .service('NavSearch', NavSearch);
-
-    function NavSearch() {
-        this.toggle = toggle;
-        this.dismiss = dismiss;
-
-        ////////////////
-
-        var navbarFormSelector = 'form.navbar-form';
-
-        function toggle() {
-          var navbarForm = $(navbarFormSelector);
-
-          navbarForm.toggleClass('open');
-          
-          var isOpen = navbarForm.hasClass('open');
-          
-          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
-        }
-
-        function dismiss() {
-          $(navbarFormSelector)
-            .removeClass('open') // Close control
-            .find('input[type="text"]').blur() // remove focus
-            .val('') // Empty input
-            ;
-        }        
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.settings')
-        .run(settingsRun);
-
-    settingsRun.$inject = ['$rootScope', '$localStorage'];
-
-    function settingsRun($rootScope, $localStorage){
-
-      // Global Settings
-      // -----------------------------------
-      $rootScope.app = {
-        name: 'Freeman Daycare',
-        description: 'A Daycare Admin Tool',
-        year: ((new Date()).getFullYear()),
-        layout: {
-          isFixed: true,
-          isCollapsed: false,
-          isBoxed: false,
-          isRTL: false,
-          horizontal: false,
-          isFloat: false,
-          asideHover: false,
-          theme: null,
-          asideScrollbar: false
-        },
-        useFullLayout: false,
-        hiddenFooter: false,
-        offsidebarOpen: false,
-        asideToggled: false,
-        viewAnimation: 'ng-fadeInUp'
-      };
-
-      // Setup the layout mode
-      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
-
-      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
-      // if( angular.isDefined($localStorage.layout) )
-      //   $rootScope.app.layout = $localStorage.layout;
-      // else
-      //   $localStorage.layout = $rootScope.app.layout;
-      //
-      // $rootScope.$watch('app.layout', function () {
-      //   $localStorage.layout = $rootScope.app.layout;
-      // }, true);
-
-      // Close submenu when sidebar change from collapsed to normal
-      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
-        if( newValue === false )
-          $rootScope.$broadcast('closeSidebarMenu');
-      });
-
-    }
-
-})();
-
 /**=========================================================
  * Module: helpers.js
  * Provides helper functions for routes definition
@@ -1676,7 +1510,7 @@
               abstract: true,
               templateUrl: helper.basepath('app.html'),
               resolve: angular.extend(
-                 helper.resolveFor('modernizr', 'icons', 'toaster'), {
+                 helper.resolveFor('modernizr', 'icons', 'toaster', 'akoenig.deckgrid'), {
                      loginRequired: loginRequired
                  }
                )
@@ -1743,7 +1577,12 @@
               controller: 'UserGridController',
               resolve: helper.resolveFor('xeditable'),
               templateUrl: helper.basepath('user-grid/user-grid.html')
-          })
+         })
+        .state('app.students', {
+            url: '/students',
+            title: 'Students',
+            templateUrl: helper.basepath('students/students.html')
+        })
 
         function loginRequired($location, $q, $timeout, $state, authService) {
             var deferred = $q.defer();
@@ -1783,6 +1622,64 @@
 
 })();
 
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.settings')
+        .run(settingsRun);
+
+    settingsRun.$inject = ['$rootScope', '$localStorage'];
+
+    function settingsRun($rootScope, $localStorage){
+
+      // Global Settings
+      // -----------------------------------
+      $rootScope.app = {
+        name: 'Freeman Daycare',
+        description: 'A Daycare Admin Tool',
+        year: ((new Date()).getFullYear()),
+        layout: {
+          isFixed: true,
+          isCollapsed: false,
+          isBoxed: false,
+          isRTL: false,
+          horizontal: false,
+          isFloat: false,
+          asideHover: false,
+          theme: null,
+          asideScrollbar: false
+        },
+        useFullLayout: false,
+        hiddenFooter: false,
+        offsidebarOpen: false,
+        asideToggled: false,
+        viewAnimation: 'ng-fadeInUp'
+      };
+
+      // Setup the layout mode
+      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
+
+      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
+      // if( angular.isDefined($localStorage.layout) )
+      //   $rootScope.app.layout = $localStorage.layout;
+      // else
+      //   $localStorage.layout = $rootScope.app.layout;
+      //
+      // $rootScope.$watch('app.layout', function () {
+      //   $localStorage.layout = $rootScope.app.layout;
+      // }, true);
+
+      // Close submenu when sidebar change from collapsed to normal
+      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
+        if( newValue === false )
+          $rootScope.$broadcast('closeSidebarMenu');
+      });
+
+    }
+
+})();
 
 /**=========================================================
  * Module: sidebar-menu.js
@@ -2210,6 +2107,115 @@
 
     }
 })();
+/**=========================================================
+ * Module: navbar-search.js
+ * Navbar search toggler * Auto dismiss on ESC key
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .directive('searchOpen', searchOpen)
+        .directive('searchDismiss', searchDismiss);
+
+    //
+    // directives definition
+    // 
+    
+    function searchOpen () {
+        var directive = {
+            controller: searchOpenController,
+            restrict: 'A'
+        };
+        return directive;
+
+    }
+
+    function searchDismiss () {
+        var directive = {
+            controller: searchDismissController,
+            restrict: 'A'
+        };
+        return directive;
+        
+    }
+
+    //
+    // Contrller definition
+    // 
+    
+    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchOpenController ($scope, $element, NavSearch) {
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.toggle);
+    }
+
+    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchDismissController ($scope, $element, NavSearch) {
+      
+      var inputSelector = '.navbar-form input[type="text"]';
+
+      $(inputSelector)
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('keyup', function(e) {
+          if (e.keyCode === 27) // ESC
+            NavSearch.dismiss();
+        });
+        
+      // click anywhere closes the search
+      $(document).on('click', NavSearch.dismiss);
+      // dismissable options
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.dismiss);
+    }
+
+})();
+
+
+/**=========================================================
+ * Module: nav-search.js
+ * Services to share navbar search functions
+ =========================================================*/
+ 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .service('NavSearch', NavSearch);
+
+    function NavSearch() {
+        this.toggle = toggle;
+        this.dismiss = dismiss;
+
+        ////////////////
+
+        var navbarFormSelector = 'form.navbar-form';
+
+        function toggle() {
+          var navbarForm = $(navbarFormSelector);
+
+          navbarForm.toggleClass('open');
+          
+          var isOpen = navbarForm.hasClass('open');
+          
+          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
+        }
+
+        function dismiss() {
+          $(navbarFormSelector)
+            .removeClass('open') // Close control
+            .find('input[type="text"]').blur() // remove focus
+            .val('') // Empty input
+            ;
+        }        
+    }
+})();
+
 /**=========================================================
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive
@@ -2650,12 +2656,19 @@
             // or just modules
             'app.core',
             'app.sidebar',
+            'app.elements',
             'LocalStorageModule',
             'ngPassword',
             'angularUtils.directives.dirPagination',
             'angular-toArrayFilter'
             /*...*/
         ]);    
+})();
+(function () {
+    'use strict';
+
+    angular
+        .module('app.elements', []);
 })();
 (function () {
     'use strict';
@@ -4153,7 +4166,14 @@ angular.module('angular-toArrayFilter', [])
             return deferred.promise;
         }
 
+        var _assignRolesToUser = function (id, rolesToAssign) {
+            return $http.post(serviceBase + 'api/accounts/create', registration).then(function (response) {
+                return response;
+            });
+        }
+
         rolesServiceFactory.getRoles = _getRoles;
+        rolesServiceFactory.assignRolesToUser = _assignRolesToUser;
 
         return rolesServiceFactory;
     }
@@ -4366,14 +4386,15 @@ angular.module('angular-toArrayFilter', [])
             };
 
             vm.saveUser = function (data, id) {
+                var fullName = data.fullName.split(" ");
                 //vm.user not updated yet
                 var account = {
                     userName: data.userName,
-                    firstName: "",
-                    lastName: "",
+                    firstName: fullName[0],
+                    lastName: fullName[fullName.length - 1],
                     email: data.userName,
-                    password: "",
-                    confirmPassword: "",
+                    password: "TempPass#163",
+                    confirmPassword: "TempPass#163",
                     agreed: false
                 };
                 angular.extend(data, { id: id });
@@ -4483,4 +4504,90 @@ angular.module('angular-toArrayFilter', [])
 
         }
     }
+})();
+
+(function () {
+    'use strict';
+
+    angular
+        .module('app.elements')
+        .controller('StudentController', StudentController)
+        .directive('imageloaded', imageloaded);
+
+    StudentController.$inject = ['$scope', '$http','RouteHelpers'];
+    function StudentController($scope, $http, RouteHelpers) {
+        // for controllerAs syntax
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+            vm.basepath = RouteHelpers.basepath;
+            vm.masonryItems = [{
+                "img": "app/img/bg1.jpg",
+                "author": "Erica Castro",
+                "title": "Trip down the river",
+                "body": "Aenean in sollicitudin velit. Nam sem magna, tristique non facilisis a, porta ut elit. Aliquam luctus nulla in justo euismod blandit. Aliquam condimentum enim a risus cursus blandit.",
+                "date": "May 03, 2015",
+                "comment_count": "56"
+            }, {
+                "img": "app/img/bg1.jpg",
+                "author": "Erica Castro",
+                "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                "body": "Aenean in sollicitudin velit. Nam sem magna, tristique non facilisis a, porta ut elit. Aliquam luctus nulla in justo euismod blandit. Aliquam condimentum enim a risus cursus blandit.",
+                "date": "May 03, 2015",
+                "comment_count": "56"
+            }, {
+                "img": "app/img/bg10.jpg",
+                "author": "Erica Castro",
+                "title": "Trip down the river",
+                "body": "Nullam posuere euismod volutpat. Quisque in ligula eget libero tristique varius sed euismod dolor. Sed ultrices, diam varius pellentesque porta, nulla neque auctor elit, quis tempus orci massa eget odio. Duis eleifend elementum commodo. Donec volutpat tristique laoreet. Cras vitae turpis enim, eget malesuada erat. Suspendisse quam leo, gravida a ullamcorper a, interdum id odio. Nullam eu lacus in nibh rutrum ornare at eget tellus.",
+                "date": "May 03, 2015",
+                "comment_count": "56"
+            }, {
+                "img": "app/img/bg2.jpg",
+                "author": "Erica Castro",
+                "title": "Reviewing latests phones",
+                "body": "Aenean in sollicitudin velit. Nam sem magna, tristique non facilisis a, porta ut elit. Aliquam luctus nulla in justo euismod blandit. Aliquam condimentum enim a risus cursus blandit.",
+                "date": "May 03, 2015",
+                "comment_count": "56"
+            }, {
+                "img": "app/img/bg8.jpg",
+                "author": "Erica Castro",
+                "title": "Workspace showcase",
+                "body": "Aenean iaculis diam lectus. Morbi quis purus velit. Maecenas tincidunt tempus sapien id ultrices. Vivamus fermentum libero vel felis aliquet interdum.",
+                "date": "May 03, 2015",
+                "comment_count": "5600"
+            }, {
+                "img": "app/img/bg3.jpg",
+                "author": "Erica Castro",
+                "title": "Incredible panoramic",
+                "body": "Aenean in sollicitudin velit. Nam sem magna, tristique non facilisis a, porta ut elit. Aliquam luctus nulla in justo euismod blandit. Aliquam condimentum enim a risus cursus blandit.",
+                "date": "May 03, 2015",
+                "comment_count": "56"
+            }];
+            
+        }
+        
+    }
+    function imageloaded() {
+        // Copyright(c) 2013 André König <akoenig@posteo.de>
+        // MIT Licensed
+        var directive = {
+            link: link,
+            restrict: 'A'
+        };
+        return directive;
+
+        function link(scope, element, attrs) {
+            var cssClass = attrs.loadedclass;
+
+            element.bind('load', function () {
+                angular.element(element).addClass(cssClass);
+            });
+        }
+    }
+
 })();

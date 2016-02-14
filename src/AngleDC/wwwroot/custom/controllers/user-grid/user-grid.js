@@ -80,14 +80,15 @@
             };
 
             vm.saveUser = function (data, id) {
+                var fullName = data.fullName.split(" ");
                 //vm.user not updated yet
                 var account = {
                     userName: data.userName,
-                    firstName: "",
-                    lastName: "",
+                    firstName: fullName[0],
+                    lastName: fullName[fullName.length - 1],
                     email: data.userName,
-                    password: "",
-                    confirmPassword: "",
+                    password: "TempPass#163",
+                    confirmPassword: "TempPass#163",
                     agreed: false
                 };
                 angular.extend(data, { id: id });

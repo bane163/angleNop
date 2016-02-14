@@ -47,7 +47,7 @@
               abstract: true,
               templateUrl: helper.basepath('app.html'),
               resolve: angular.extend(
-                 helper.resolveFor('modernizr', 'icons', 'toaster'), {
+                 helper.resolveFor('modernizr', 'icons', 'toaster', 'akoenig.deckgrid'), {
                      loginRequired: loginRequired
                  }
                )
@@ -114,7 +114,12 @@
               controller: 'UserGridController',
               resolve: helper.resolveFor('xeditable'),
               templateUrl: helper.basepath('user-grid/user-grid.html')
-          })
+         })
+        .state('app.students', {
+            url: '/students',
+            title: 'Students',
+            templateUrl: helper.basepath('students/students.html')
+        })
 
         function loginRequired($location, $q, $timeout, $state, authService) {
             var deferred = $q.defer();
