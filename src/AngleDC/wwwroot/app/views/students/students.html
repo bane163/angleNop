@@ -1,4 +1,4 @@
-﻿<div ng-controller="StudentController as sc" class="row-masonry row-masonry-xl-6 row-masonry-lg-4 row-masonry-md-3 row-masonry-sm-2">
+﻿<!--<div ng-controller="StudentController as sc" class="row-masonry row-masonry-xl-6 row-masonry-lg-4 row-masonry-md-3 row-masonry-sm-2">
     <div ng-repeat="item in sc.masonryItems" class="col-masonry">
         <a href="">
             <img src="" data-ng-src="{{item.img}}" class="img-thumbnail img-responsive" />
@@ -10,4 +10,57 @@
             <p>{{item.body}}</p>
         </div>
     </div>
+</div>-->
+
+<div ng-controller="StudentController as sc" class="row-masonry row-masonry-md-3 row-masonry-sm-2">
+    <!-- START widget-->
+    <div ng-repeat="item in sc.masonryItems">
+        <div class="col-masonry panel widget student-widget">
+            <div style="background-image: url('app/img/bg4.jpg')" class="panel-body text-center bg-center">
+                <div class="row row-table">
+                    <div class="col-xs-12 text-white">
+                        <img src="" data-ng-src="{{item.img}}" alt="Image" class="img-thumbnail img-circle thumb128" />
+                        <h3 class="m0">{{item.author}}</h3>
+                        <p class="m0">
+                            <em class="fa fa-twitter fa-fw"></em>@chris
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body text-center bg-gray-darker">
+                <div class="row row-table">
+                    <div class="col-xs-4">
+                        <a href="#" class="text-white">
+                            <em class="fa fa-twitter fa-2x"></em>
+                        </a>
+                    </div>
+                    <div class="col-xs-4">
+                        <a href="#" class="text-white">
+                            <em class="fa fa-facebook fa-2x"></em>
+                        </a>
+                    </div>
+                    <div class="col-xs-4">
+                        <a href="#" class="text-white">
+                            <em class="fa fa-comments fa-2x"></em>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="list-group">
+                <a href="#" class="list-group-item">
+                    <span class="label label-primary pull-right">15</span>
+                    <em class="fa fa-fw fa-clock-o text-muted"></em>{{item.title}}
+                </a>
+                <a href="#" class="list-group-item">
+                    <span class="label label-primary pull-right">100</span>
+                    <em class="fa fa-fw fa-user text-muted"></em>Following
+                </a>
+                <a href="#" class="list-group-item">
+                    <span class="label label-primary pull-right">300</span>
+                    <em class="fa fa-fw fa-folder-open-o text-muted"></em>Photos
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- END widget-->
 </div>

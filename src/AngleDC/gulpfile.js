@@ -1,4 +1,4 @@
-﻿/// <binding />
+﻿/// <binding AfterBuild='min:css' />
 var args = require('yargs').argv,
     path = require('path'),
     flip = require('css-flip'),
