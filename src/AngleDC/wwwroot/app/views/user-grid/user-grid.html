@@ -3,82 +3,111 @@
     <small>Edit in place</small>
 </h3>
 <div ng-controller="UserGridController as ugc">
-    <div class="panel panel-default">
-        <table class="table table-bordered table-hover bg-white">
-            <tr style="font-weight: bold">
-                <td style="width:35%">Username</td>
-                <td style="width:20%">Full Name</td>
-                <td style="width:20%">Group</td>
-                <td style="width:25%">Edit</td>
-                <td check-all="check-all">
-                    <div class="checkbox c-checkbox">
-                        <label>
-                            <input type="checkbox" />
-                            <span class="fa fa-check"></span>
-                        </label>
-                    </div>
-                </td>
-            </tr>
-            <tr dir-paginate="user in ugc.users | itemsPerPage: 10  | toArray | filter:search:strict">
-                <td>
-                    <!-- editable username (text with validation)-->
-                    <span editable-text="user.userName" e-name="userName" e-form="rowform" onbeforesave="ugc.checkName($data, user.id)" e-required="">{{ user.userName || &apos;empty&apos; }}</span>
-                </td>
-                <td>
-                    <!-- editable status (select-local)-->
-                    <span editable-text="user.fullName" e-name="fullName" e-form="rowform" onbeforesave="ugc.checkName($data, user.id)" e-required="">{{ user.fullName || &apos;empty&apos; }}</span>
-                </td>
-                <td>
-                    <!-- editable group (select-remote)-->
-                    <span editable-select="user.group" e-name="group" onshow="ugc.loadGroups()" e-form="rowform" e-ng-options="g.id as g.name for g in ugc.groups">{{ ugc.showGroup(user) }}</span>
-                </td>
-                <td style="white-space: nowrap">
-                    <!-- form-->
-                    <form editable-form="" name="rowform" onbeforesave="ugc.saveUser($data, user.id)" ng-show="rowform.$visible" shown="ugc.inserted == user" class="form-buttons form-inline">
-                        <button type="submit" ng-disabled="rowform.$waiting" title="Save" class="btn btn-sm btn-info">
-                            <em class="fa fa-save"></em>
-                        </button>
-                        <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" title="Cancel" class="btn btn-sm btn-default">
-                            <em class="fa fa-times"></em>
-                        </button>
-                    </form>
-                    <div ng-show="!rowform.$visible" class="buttons">
-                        <button ng-click="rowform.$show()" title="Edit" class="btn btn-sm btn-info">
-                            <em class="fa fa-pencil"></em>
-                        </button>
-                        <button ng-click="ugc.removeUser($index)" title="Delete" class="btn btn-sm btn-danger">
-                            <em class="fa fa-trash"></em>
-                        </button>
-                    </div>
-                </td>
-                <td>
-                    <div class="checkbox c-checkbox">
-                        <label>
-                            <input type="checkbox" />
-                            <span class="fa fa-check"></span>
-                        </label>
-                    </div>
-                </td>
-            </tr>
-        </table>
-        <div class="panel-footer">
-            <div class="row">
-                <div class="col-lg-2">
-                    <div class="input-group pull-right">
-                        <select class="input-sm form-control">
-                            <option value="0">Action</option>
-                            <option value="1">Delete</option>
-                            <option value="2">Clone</option>
-                            <option value="3">Export</option>
-                        </select>
-                        <span class="input-group-btn">
-                            <button class="btn btn-sm btn-default">Apply</button>
-                        </span>
-                    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="text-center">
+                        <h3 class="mt0">Ted Berry</h3>
+                        <p>Lead director</p>
+                    </div><hr>
+                    <ul class="list-unstyled ph-xl">
+                        <li><em class="fa fa-home fa-fw mr-lg"></em>Somewhere, Neverland</li>
+                        <li><em class="fa fa-briefcase fa-fw mr-lg"></em><a href="#">Themicon.co</a></li>
+                        <li><em class="fa fa-graduation-cap fa-fw mr-lg"></em>Master Designer</li>
+                    </ul>
                 </div>
-                <div class="col-lg-6"></div>
-                <div class="col-lg-4 text-right">
-                    <dir-pagination-controls></dir-pagination-controls>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="#" class="pull-right"><em class="icon-plus text-muted"></em></a>Contacts
+                </div><div class="list-group"><!-- START User status--><a href="#" class="media p mt0 list-group-item"><span class="pull-right"><span class="circle circle-success circle-lg"></span></span><span class="pull-left"><!-- Contact avatar--><img src="app/img/user/05.jpg" alt="Image" class="media-object img-circle thumb32"></span><!-- Contact info--><span class="media-body"><span class="media-heading"><strong>Juan Sims</strong><br><small class="text-muted">Designeer</small></span></span></a><!-- END User status--><!-- START User status--><a href="#" class="media p mt0 list-group-item"><span class="pull-right"><span class="circle circle-success circle-lg"></span></span><span class="pull-left"><!-- Contact avatar--><img src="app/img/user/06.jpg" alt="Image" class="media-object img-circle thumb32"></span><!-- Contact info--><span class="media-body"><span class="media-heading"><strong>Maureen Jenkins</strong><br><small class="text-muted">Designeer</small></span></span></a><!-- END User status--><!-- START User status--><a href="#" class="media p mt0 list-group-item"><span class="pull-right"><span class="circle circle-danger circle-lg"></span></span><span class="pull-left"><!-- Contact avatar--><img src="app/img/user/07.jpg" alt="Image" class="media-object img-circle thumb32"></span><!-- Contact info--><span class="media-body"><span class="media-heading"><strong>Billie Dunn</strong><br><small class="text-muted">Designeer</small></span></span></a><!-- END User status--><!-- START User status--><a href="#" class="media p mt0 list-group-item"><span class="pull-right"><span class="circle circle-warning circle-lg"></span></span><span class="pull-left"><!-- Contact avatar--><img src="app/img/user/08.jpg" alt="Image" class="media-object img-circle thumb32"></span><!-- Contact info--><span class="media-body"><span class="media-heading"><strong>Tomothy Roberts</strong><br><small class="text-muted">Designer</small></span></span></a><!-- END User status--><a href="#" class="media p mt0 list-group-item text-center text-muted">View all contacts</a></div>
+            </div>
+            <div class="panel panel-default">
+                <div class="list-group">
+                    <a href="#" class="list-group-item"><em class="pull-right fa fa-users fa-lg fa-fw text-muted mt"></em><h4 class="list-group-item-heading">1000</h4><p class="list-group-item-text">Friends</p></a><a href="#" class="list-group-item"><em class="pull-right fa fa-rss fa-lg fa-fw text-muted mt"></em><h4 class="list-group-item-heading">3000</h4><p class="list-group-item-text">Subscriptions</p></a><a href="#" class="list-group-item"><em class="pull-right fa fa-map-marker fa-lg fa-fw text-muted mt"></em><h4 class="list-group-item-heading">100</h4><p class="list-group-item-text">Places</p></a><a href="#" class="list-group-item"><em class="pull-right fa fa-briefcase fa-lg fa-fw text-muted mt"></em><h4 class="list-group-item-heading">400</h4><p class="list-group-item-text">Projects</p></a><a href="#" class="list-group-item"><em class="pull-right fa fa-twitter fa-lg fa-fw text-muted mt"></em><h4 class="list-group-item-heading">17300</h4><p class="list-group-item-text">Twees</p></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-9">
+            <div class="panel panel-default">
+                <table class="table table-bordered table-hover bg-white">
+                    <tr style="font-weight: bold">
+                        <td style="width:35%">Username</td>
+                        <td style="width:20%">Full Name</td>
+                        <td style="width:20%">Group</td>
+                        <td style="width:25%">Edit</td>
+                        <td check-all="check-all">
+                            <div class="checkbox c-checkbox">
+                                <label>
+                                    <input type="checkbox" />
+                                    <span class="fa fa-check"></span>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr dir-paginate="user in ugc.users | itemsPerPage: 10  | toArray | filter:search:strict">
+                        <td>
+                            <!-- editable username (text with validation)-->
+                            <span editable-text="user.userName" e-name="userName" e-form="rowform" onbeforesave="ugc.checkName($data, user.id)" e-required="">{{ user.userName || &apos;empty&apos; }}</span>
+                        </td>
+                        <td>
+                            <!-- editable status (select-local)-->
+                            <span editable-text="user.fullName" e-name="fullName" e-form="rowform" onbeforesave="ugc.checkName($data, user.id)" e-required="">{{ user.fullName || &apos;empty&apos; }}</span>
+                        </td>
+                        <td>
+                            <!-- editable group (select-remote)-->
+                            <span editable-select="user.group" e-name="group" onshow="ugc.loadGroups()" e-form="rowform" e-ng-options="g.id as g.name for g in ugc.groups">{{ ugc.showGroup(user) }}</span>
+                        </td>
+                        <td style="white-space: nowrap">
+                            <!-- form-->
+                            <form editable-form="" name="rowform" onbeforesave="ugc.saveUser($data, user.id)" ng-show="rowform.$visible" shown="ugc.inserted == user" class="form-buttons form-inline">
+                                <button type="submit" ng-disabled="rowform.$waiting" title="Save" class="btn btn-sm btn-info">
+                                    <em class="fa fa-save"></em>
+                                </button>
+                                <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" title="Cancel" class="btn btn-sm btn-default">
+                                    <em class="fa fa-times"></em>
+                                </button>
+                            </form>
+                            <div ng-show="!rowform.$visible" class="buttons">
+                                <button ng-click="rowform.$show()" title="Edit" class="btn btn-sm btn-info">
+                                    <em class="fa fa-pencil"></em>
+                                </button>
+                                <button ng-click="ugc.removeUser($index)" title="Delete" class="btn btn-sm btn-danger">
+                                    <em class="fa fa-trash"></em>
+                                </button>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="checkbox c-checkbox">
+                                <label>
+                                    <input type="checkbox" />
+                                    <span class="fa fa-check"></span>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <div class="input-group pull-right">
+                                <select class="input-sm form-control">
+                                    <option value="0">Action</option>
+                                    <option value="1">Delete</option>
+                                    <option value="2">Clone</option>
+                                    <option value="3">Export</option>
+                                </select>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-sm btn-default">Apply</button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6"></div>
+                        <div class="col-lg-4 text-right">
+                            <dir-pagination-controls></dir-pagination-controls>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

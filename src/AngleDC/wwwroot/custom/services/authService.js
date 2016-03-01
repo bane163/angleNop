@@ -26,7 +26,10 @@
 
             _logOut();
 
-            return $http.post(serviceBase + 'api/accounts/create', registration).then(function (response) {
+            //return $http.post(serviceBase + 'api/accounts/create', registration).then(function (response) {
+            //    return response;
+            //});
+            return $http.post(serviceBase + 'api/accounts/nop/create', registration).then(function (response) {
                 return response;
             });
 

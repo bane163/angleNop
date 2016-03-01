@@ -90,6 +90,12 @@
     'use strict';
 
     angular
+        .module('app.navsearch', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.preloader', []);
 })();
 
@@ -119,12 +125,6 @@
 
     angular
         .module('app.translate', []);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch', []);
 })();
 (function() {
     'use strict';
@@ -1284,6 +1284,115 @@
         }
     }
 })();
+/**=========================================================
+ * Module: navbar-search.js
+ * Navbar search toggler * Auto dismiss on ESC key
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .directive('searchOpen', searchOpen)
+        .directive('searchDismiss', searchDismiss);
+
+    //
+    // directives definition
+    // 
+    
+    function searchOpen () {
+        var directive = {
+            controller: searchOpenController,
+            restrict: 'A'
+        };
+        return directive;
+
+    }
+
+    function searchDismiss () {
+        var directive = {
+            controller: searchDismissController,
+            restrict: 'A'
+        };
+        return directive;
+        
+    }
+
+    //
+    // Contrller definition
+    // 
+    
+    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchOpenController ($scope, $element, NavSearch) {
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.toggle);
+    }
+
+    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
+    function searchDismissController ($scope, $element, NavSearch) {
+      
+      var inputSelector = '.navbar-form input[type="text"]';
+
+      $(inputSelector)
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('keyup', function(e) {
+          if (e.keyCode === 27) // ESC
+            NavSearch.dismiss();
+        });
+        
+      // click anywhere closes the search
+      $(document).on('click', NavSearch.dismiss);
+      // dismissable options
+      $element
+        .on('click', function (e) { e.stopPropagation(); })
+        .on('click', NavSearch.dismiss);
+    }
+
+})();
+
+
+/**=========================================================
+ * Module: nav-search.js
+ * Services to share navbar search functions
+ =========================================================*/
+ 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.navsearch')
+        .service('NavSearch', NavSearch);
+
+    function NavSearch() {
+        this.toggle = toggle;
+        this.dismiss = dismiss;
+
+        ////////////////
+
+        var navbarFormSelector = 'form.navbar-form';
+
+        function toggle() {
+          var navbarForm = $(navbarFormSelector);
+
+          navbarForm.toggleClass('open');
+          
+          var isOpen = navbarForm.hasClass('open');
+          
+          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
+        }
+
+        function dismiss() {
+          $(navbarFormSelector)
+            .removeClass('open') // Close control
+            .find('input[type="text"]').blur() // remove focus
+            .val('') // Empty input
+            ;
+        }        
+    }
+})();
+
 (function() {
     'use strict';
 
@@ -2108,115 +2217,6 @@
     }
 })();
 /**=========================================================
- * Module: navbar-search.js
- * Navbar search toggler * Auto dismiss on ESC key
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .directive('searchOpen', searchOpen)
-        .directive('searchDismiss', searchDismiss);
-
-    //
-    // directives definition
-    // 
-    
-    function searchOpen () {
-        var directive = {
-            controller: searchOpenController,
-            restrict: 'A'
-        };
-        return directive;
-
-    }
-
-    function searchDismiss () {
-        var directive = {
-            controller: searchDismissController,
-            restrict: 'A'
-        };
-        return directive;
-        
-    }
-
-    //
-    // Contrller definition
-    // 
-    
-    searchOpenController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchOpenController ($scope, $element, NavSearch) {
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.toggle);
-    }
-
-    searchDismissController.$inject = ['$scope', '$element', 'NavSearch'];
-    function searchDismissController ($scope, $element, NavSearch) {
-      
-      var inputSelector = '.navbar-form input[type="text"]';
-
-      $(inputSelector)
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('keyup', function(e) {
-          if (e.keyCode === 27) // ESC
-            NavSearch.dismiss();
-        });
-        
-      // click anywhere closes the search
-      $(document).on('click', NavSearch.dismiss);
-      // dismissable options
-      $element
-        .on('click', function (e) { e.stopPropagation(); })
-        .on('click', NavSearch.dismiss);
-    }
-
-})();
-
-
-/**=========================================================
- * Module: nav-search.js
- * Services to share navbar search functions
- =========================================================*/
- 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.navsearch')
-        .service('NavSearch', NavSearch);
-
-    function NavSearch() {
-        this.toggle = toggle;
-        this.dismiss = dismiss;
-
-        ////////////////
-
-        var navbarFormSelector = 'form.navbar-form';
-
-        function toggle() {
-          var navbarForm = $(navbarFormSelector);
-
-          navbarForm.toggleClass('open');
-          
-          var isOpen = navbarForm.hasClass('open');
-          
-          navbarForm.find('input')[isOpen ? 'focus' : 'blur']();
-        }
-
-        function dismiss() {
-          $(navbarFormSelector)
-            .removeClass('open') // Close control
-            .find('input[type="text"]').blur() // remove focus
-            .val('') // Empty input
-            ;
-        }        
-    }
-})();
-
-/**=========================================================
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive
  =========================================================*/
@@ -2660,7 +2660,8 @@
             'LocalStorageModule',
             'ngPassword',
             'angularUtils.directives.dirPagination',
-            'angular-toArrayFilter'
+            'angular-toArrayFilter',
+            'angular-loading-bar'
             /*...*/
         ]);    
 })();
@@ -2688,6 +2689,7 @@
     //var serviceBase = 'http://localhost/AngularJSAuthentication.API/';
     //var serviceBase = 'http://localhost:26264/';
     var serviceBase = 'http://localhost:59822/';
+    //var serviceBase = 'http://localhost:54150/';
     
     
     angular
@@ -3878,13 +3880,13 @@ angularLocalStorage.provider('localStorageService', function() {
     }
 })();
 
-/*! 
- * angular-loading-bar v0.3.0
- * https://chieffancypants.github.io/angular-loading-bar
- * Copyright (c) 2014 Wes Cruver
- * License: MIT
- */
-!function(){"use strict";angular.module("angular-loading-bar",["chieffancypants.loadingBar"]),angular.module("chieffancypants.loadingBar",[]).config(["$httpProvider",function(a){var b=["$q","$cacheFactory","$timeout","$rootScope","cfpLoadingBar",function(b,c,d,e,f){function g(){d.cancel(i),f.complete(),k=0,j=0}function h(b){var d,e=a.defaults;if("GET"!==b.method||b.cache===!1)return b.cached=!1,!1;d=b.cache===!0&&void 0===e.cache?c.get("$http"):void 0!==e.cache?e.cache:b.cache;var f=void 0!==d?void 0!==d.get(b.url):!1;return void 0!==b.cached&&f!==b.cached?b.cached:(b.cached=f,f)}var i,j=0,k=0,l=f.latencyThreshold;return{request:function(a){return a.ignoreLoadingBar||h(a)||(e.$broadcast("cfpLoadingBar:loading",{url:a.url}),0===j&&(i=d(function(){f.start()},l)),j++,f.set(k/j)),a},response:function(a){return h(a.config)||(k++,e.$broadcast("cfpLoadingBar:loaded",{url:a.config.url}),k>=j?g():f.set(k/j)),a},responseError:function(a){return h(a.config)||(k++,e.$broadcast("cfpLoadingBar:loaded",{url:a.config.url}),k>=j?g():f.set(k/j)),b.reject(a)}}}];a.interceptors.push(b)}]).provider("cfpLoadingBar",function(){this.includeSpinner=!0,this.includeBar=!0,this.latencyThreshold=100,this.parentSelector="body",this.$get=["$document","$timeout","$animate","$rootScope",function(a,b,c,d){function e(){b.cancel(k),q||(d.$broadcast("cfpLoadingBar:started"),q=!0,t&&c.enter(n,m),s&&c.enter(p,m),f(.02))}function f(a){if(q){var c=100*a+"%";o.css("width",c),r=a,b.cancel(j),j=b(function(){g()},250)}}function g(){if(!(h()>=1)){var a=0,b=h();a=b>=0&&.25>b?(3*Math.random()+3)/100:b>=.25&&.65>b?3*Math.random()/100:b>=.65&&.9>b?2*Math.random()/100:b>=.9&&.99>b?.005:0;var c=h()+a;f(c)}}function h(){return r}function i(){d.$broadcast("cfpLoadingBar:completed"),f(1),k=b(function(){c.leave(n,function(){r=0,q=!1}),c.leave(p)},500)}var j,k,l=this.parentSelector,m=a.find(l),n=angular.element('<div id="loading-bar"><div class="bar"><div class="peg"></div></div></div>'),o=n.find("div").eq(0),p=angular.element('<div id="loading-bar-spinner"><div class="spinner-icon"></div></div>'),q=!1,r=0,s=this.includeSpinner,t=this.includeBar;return{start:e,set:f,status:h,inc:g,complete:i,includeSpinner:this.includeSpinner,latencyThreshold:this.latencyThreshold,parentSelector:this.parentSelector}}]})}();
+///*! 
+// * angular-loading-bar v0.3.0
+// * https://chieffancypants.github.io/angular-loading-bar
+// * Copyright (c) 2014 Wes Cruver
+// * License: MIT
+// */
+//!function(){"use strict";angular.module("angular-loading-bar",["chieffancypants.loadingBar"]),angular.module("chieffancypants.loadingBar",[]).config(["$httpProvider",function(a){var b=["$q","$cacheFactory","$timeout","$rootScope","cfpLoadingBar",function(b,c,d,e,f){function g(){d.cancel(i),f.complete(),k=0,j=0}function h(b){var d,e=a.defaults;if("GET"!==b.method||b.cache===!1)return b.cached=!1,!1;d=b.cache===!0&&void 0===e.cache?c.get("$http"):void 0!==e.cache?e.cache:b.cache;var f=void 0!==d?void 0!==d.get(b.url):!1;return void 0!==b.cached&&f!==b.cached?b.cached:(b.cached=f,f)}var i,j=0,k=0,l=f.latencyThreshold;return{request:function(a){return a.ignoreLoadingBar||h(a)||(e.$broadcast("cfpLoadingBar:loading",{url:a.url}),0===j&&(i=d(function(){f.start()},l)),j++,f.set(k/j)),a},response:function(a){return h(a.config)||(k++,e.$broadcast("cfpLoadingBar:loaded",{url:a.config.url}),k>=j?g():f.set(k/j)),a},responseError:function(a){return h(a.config)||(k++,e.$broadcast("cfpLoadingBar:loaded",{url:a.config.url}),k>=j?g():f.set(k/j)),b.reject(a)}}}];a.interceptors.push(b)}]).provider("cfpLoadingBar",function(){this.includeSpinner=!0,this.includeBar=!0,this.latencyThreshold=100,this.parentSelector="body",this.$get=["$document","$timeout","$animate","$rootScope",function(a,b,c,d){function e(){b.cancel(k),q||(d.$broadcast("cfpLoadingBar:started"),q=!0,t&&c.enter(n,m),s&&c.enter(p,m),f(.02))}function f(a){if(q){var c=100*a+"%";o.css("width",c),r=a,b.cancel(j),j=b(function(){g()},250)}}function g(){if(!(h()>=1)){var a=0,b=h();a=b>=0&&.25>b?(3*Math.random()+3)/100:b>=.25&&.65>b?3*Math.random()/100:b>=.65&&.9>b?2*Math.random()/100:b>=.9&&.99>b?.005:0;var c=h()+a;f(c)}}function h(){return r}function i(){d.$broadcast("cfpLoadingBar:completed"),f(1),k=b(function(){c.leave(n,function(){r=0,q=!1}),c.leave(p)},500)}var j,k,l=this.parentSelector,m=a.find(l),n=angular.element('<div id="loading-bar"><div class="bar"><div class="peg"></div></div></div>'),o=n.find("div").eq(0),p=angular.element('<div id="loading-bar-spinner"><div class="spinner-icon"></div></div>'),q=!1,r=0,s=this.includeSpinner,t=this.includeBar;return{start:e,set:f,status:h,inc:g,complete:i,includeSpinner:this.includeSpinner,latencyThreshold:this.latencyThreshold,parentSelector:this.parentSelector}}]})}();
 angular.module('angular-toArrayFilter', [])
 
 .filter('toArray', function () {
@@ -3973,7 +3975,10 @@ angular.module('angular-toArrayFilter', [])
 
             _logOut();
 
-            return $http.post(serviceBase + 'api/accounts/create', registration).then(function (response) {
+            //return $http.post(serviceBase + 'api/accounts/create', registration).then(function (response) {
+            //    return response;
+            //});
+            return $http.post(serviceBase + 'api/accounts/nop/create', registration).then(function (response) {
                 return response;
             });
 
@@ -4304,6 +4309,92 @@ angular.module('angular-toArrayFilter', [])
     }
 })();
 
+(function () {
+    'use strict';
+
+    angular
+        .module('app.elements')
+        .controller('StudentController', StudentController)
+        .directive('imageloaded', imageloaded);
+
+    StudentController.$inject = ['$scope', '$http','RouteHelpers'];
+    function StudentController($scope, $http, RouteHelpers) {
+        // for controllerAs syntax
+        var vm = this;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+            vm.basepath = RouteHelpers.basepath;
+            vm.masonryItems = [{
+                "img": "app/img/bg1.jpg",
+                "author": "Erica Castro",
+                "title": "Trip down the river",
+                "body": "Aenean in sollicitudin velit. Nam sem magna, tristique non facilisis a, porta ut elit. Aliquam luctus nulla in justo euismod blandit. Aliquam condimentum enim a risus cursus blandit.",
+                "date": "May 03, 2015",
+                "comment_count": "56"
+            }, {
+                "img": "app/img/bg1.jpg",
+                "author": "Erica Castro",
+                "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                "body": "Aenean in sollicitudin velit. Nam sem magna, tristique non facilisis a, porta ut elit. Aliquam luctus nulla in justo euismod blandit. Aliquam condimentum enim a risus cursus blandit.",
+                "date": "May 03, 2015",
+                "comment_count": "56"
+            }, {
+                "img": "app/img/bg10.jpg",
+                "author": "Erica Castro",
+                "title": "Trip down the river",
+                "body": "Nullam posuere euismod volutpat. Quisque in ligula eget libero tristique varius sed euismod dolor. Sed ultrices, diam varius pellentesque porta, nulla neque auctor elit, quis tempus orci massa eget odio. Duis eleifend elementum commodo. Donec volutpat tristique laoreet. Cras vitae turpis enim, eget malesuada erat. Suspendisse quam leo, gravida a ullamcorper a, interdum id odio. Nullam eu lacus in nibh rutrum ornare at eget tellus.",
+                "date": "May 03, 2015",
+                "comment_count": "56"
+            }, {
+                "img": "app/img/bg2.jpg",
+                "author": "Erica Castro",
+                "title": "Reviewing latests phones",
+                "body": "Aenean in sollicitudin velit. Nam sem magna, tristique non facilisis a, porta ut elit. Aliquam luctus nulla in justo euismod blandit. Aliquam condimentum enim a risus cursus blandit.",
+                "date": "May 03, 2015",
+                "comment_count": "56"
+            }, {
+                "img": "app/img/bg8.jpg",
+                "author": "Erica Castro",
+                "title": "Workspace showcase",
+                "body": "Aenean iaculis diam lectus. Morbi quis purus velit. Maecenas tincidunt tempus sapien id ultrices. Vivamus fermentum libero vel felis aliquet interdum.",
+                "date": "May 03, 2015",
+                "comment_count": "5600"
+            }, {
+                "img": "app/img/bg3.jpg",
+                "author": "Erica Castro",
+                "title": "Incredible panoramic",
+                "body": "Aenean in sollicitudin velit. Nam sem magna, tristique non facilisis a, porta ut elit. Aliquam luctus nulla in justo euismod blandit. Aliquam condimentum enim a risus cursus blandit.",
+                "date": "May 03, 2015",
+                "comment_count": "56"
+            }];
+            
+        }
+        
+    }
+    function imageloaded() {
+        // Copyright(c) 2013 André König <akoenig@posteo.de>
+        // MIT Licensed
+        var directive = {
+            link: link,
+            restrict: 'A'
+        };
+        return directive;
+
+        function link(scope, element, attrs) {
+            var cssClass = attrs.loadedclass;
+
+            element.bind('load', function () {
+                angular.element(element).addClass(cssClass);
+            });
+        }
+    }
+
+})();
+
 
 /**=========================================================
  * Module: demo-buttons.js
@@ -4504,90 +4595,4 @@ angular.module('angular-toArrayFilter', [])
 
         }
     }
-})();
-
-(function () {
-    'use strict';
-
-    angular
-        .module('app.elements')
-        .controller('StudentController', StudentController)
-        .directive('imageloaded', imageloaded);
-
-    StudentController.$inject = ['$scope', '$http','RouteHelpers'];
-    function StudentController($scope, $http, RouteHelpers) {
-        // for controllerAs syntax
-        var vm = this;
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-            vm.basepath = RouteHelpers.basepath;
-            vm.masonryItems = [{
-                "img": "app/img/bg1.jpg",
-                "author": "Erica Castro",
-                "title": "Trip down the river",
-                "body": "Aenean in sollicitudin velit. Nam sem magna, tristique non facilisis a, porta ut elit. Aliquam luctus nulla in justo euismod blandit. Aliquam condimentum enim a risus cursus blandit.",
-                "date": "May 03, 2015",
-                "comment_count": "56"
-            }, {
-                "img": "app/img/bg1.jpg",
-                "author": "Erica Castro",
-                "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                "body": "Aenean in sollicitudin velit. Nam sem magna, tristique non facilisis a, porta ut elit. Aliquam luctus nulla in justo euismod blandit. Aliquam condimentum enim a risus cursus blandit.",
-                "date": "May 03, 2015",
-                "comment_count": "56"
-            }, {
-                "img": "app/img/bg10.jpg",
-                "author": "Erica Castro",
-                "title": "Trip down the river",
-                "body": "Nullam posuere euismod volutpat. Quisque in ligula eget libero tristique varius sed euismod dolor. Sed ultrices, diam varius pellentesque porta, nulla neque auctor elit, quis tempus orci massa eget odio. Duis eleifend elementum commodo. Donec volutpat tristique laoreet. Cras vitae turpis enim, eget malesuada erat. Suspendisse quam leo, gravida a ullamcorper a, interdum id odio. Nullam eu lacus in nibh rutrum ornare at eget tellus.",
-                "date": "May 03, 2015",
-                "comment_count": "56"
-            }, {
-                "img": "app/img/bg2.jpg",
-                "author": "Erica Castro",
-                "title": "Reviewing latests phones",
-                "body": "Aenean in sollicitudin velit. Nam sem magna, tristique non facilisis a, porta ut elit. Aliquam luctus nulla in justo euismod blandit. Aliquam condimentum enim a risus cursus blandit.",
-                "date": "May 03, 2015",
-                "comment_count": "56"
-            }, {
-                "img": "app/img/bg8.jpg",
-                "author": "Erica Castro",
-                "title": "Workspace showcase",
-                "body": "Aenean iaculis diam lectus. Morbi quis purus velit. Maecenas tincidunt tempus sapien id ultrices. Vivamus fermentum libero vel felis aliquet interdum.",
-                "date": "May 03, 2015",
-                "comment_count": "5600"
-            }, {
-                "img": "app/img/bg3.jpg",
-                "author": "Erica Castro",
-                "title": "Incredible panoramic",
-                "body": "Aenean in sollicitudin velit. Nam sem magna, tristique non facilisis a, porta ut elit. Aliquam luctus nulla in justo euismod blandit. Aliquam condimentum enim a risus cursus blandit.",
-                "date": "May 03, 2015",
-                "comment_count": "56"
-            }];
-            
-        }
-        
-    }
-    function imageloaded() {
-        // Copyright(c) 2013 André König <akoenig@posteo.de>
-        // MIT Licensed
-        var directive = {
-            link: link,
-            restrict: 'A'
-        };
-        return directive;
-
-        function link(scope, element, attrs) {
-            var cssClass = attrs.loadedclass;
-
-            element.bind('load', function () {
-                angular.element(element).addClass(cssClass);
-            });
-        }
-    }
-
 })();

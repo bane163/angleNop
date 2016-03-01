@@ -6,12 +6,17 @@ using Microsoft.Owin.Security.DataHandler.Encoder;
 using Microsoft.Owin.Security.Jwt;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
+using Nop.Core;
+using Nop.Core.Data;
+using Nop.Core.Infrastructure;
 using Owin;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http.Formatting;
+using System.Threading;
 using System.Web;
 using System.Web.Http;
 
@@ -32,6 +37,9 @@ namespace AspNetIdentity.WebApi
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
 
             app.UseWebApi(httpConfig);
+
+            EngineContext.Initialize(false);
+            SetWorkingCulture();
 
         }
 
@@ -81,6 +89,21 @@ namespace AspNetIdentity.WebApi
 
             var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
             jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+        }
+
+        protected void SetWorkingCulture()
+        {
+            if (!DataSettingsHelper.DatabaseIsInstalled())
+                return;
+
+            //ignore static resources
+            var webHelper = EngineContext.Current.Resolve<IWebHelper>();
+
+
+            var workContext = EngineContext.Current.Resolve<IWorkContext>();
+            var culture = new CultureInfo(workContext.WorkingLanguage.LanguageCulture);
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
         }
     }
 }

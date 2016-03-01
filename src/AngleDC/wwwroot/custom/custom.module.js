@@ -12,7 +12,8 @@
             'LocalStorageModule',
             'ngPassword',
             'angularUtils.directives.dirPagination',
-            'angular-toArrayFilter'
+            'angular-toArrayFilter',
+            'angular-loading-bar'
             /*...*/
         ]);    
 })();

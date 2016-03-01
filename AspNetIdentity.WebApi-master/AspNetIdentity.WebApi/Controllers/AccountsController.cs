@@ -10,12 +10,36 @@ using Microsoft.AspNet.Identity.Owin;
 using System.Threading.Tasks;
 using AspNetIdentity.WebApi.Models;
 using System.Security.Claims;
+using Nop.Services.Customers;
+using Nop.Core;
+using Nop.Core.Domain.Customers;
+using Nop.WebApi.Models.Customer;
 
 namespace AspNetIdentity.WebApi.Controllers
 {
     [RoutePrefix("api/accounts")]
     public class AccountsController : BaseApiController
     {
+        #region Fields
+        private readonly ICustomerRegistrationService _customerRegistrationService;
+        private readonly IWorkContext _workContext;
+        private readonly CustomerSettings _customerSettings;
+        #endregion
+
+        #region Ctor
+        public AccountsController()
+        {
+            
+        }
+        public AccountsController(ICustomerRegistrationService customerRegistrationService,
+            IWorkContext workContext,
+            CustomerSettings customerSettings)
+        {
+            _customerRegistrationService = customerRegistrationService;
+            _workContext = workContext;
+            _customerSettings = customerSettings;
+        }
+        #endregion
 
         [Authorize(Roles="Admin")]
         [Route("users")]
@@ -99,6 +123,20 @@ namespace AspNetIdentity.WebApi.Controllers
             Uri locationHeader = new Uri(Url.Link("GetUserById", new { id = user.Id }));
 
             return Created(locationHeader, TheModelFactory.Create(user));
+
+        }
+
+        [AllowAnonymous]
+        [Route("nop/create")]
+        public IHttpActionResult CreateUser(RegisterModel model)
+        {
+            var customer = _workContext.CurrentCustomer;
+            bool isApproved = _customerSettings.UserRegistrationType == UserRegistrationType.Standard;
+            var registrationRequest = new CustomerRegistrationRequest(customer, model.Email,
+                    _customerSettings.UsernamesEnabled ? model.Username : model.Email, model.Password, _customerSettings.DefaultPasswordFormat, isApproved);
+            var registrationResult = _customerRegistrationService.RegisterCustomer(registrationRequest);
+            return Ok();
+
 
         }
 
